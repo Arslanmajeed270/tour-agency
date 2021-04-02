@@ -1,0 +1,2 @@
+export const SET_HOME_PAGE_DATA = 'SET_HOME_PAGE_DATA';
+export const SET_CITIES_DATA = 'SET_CITIES_DATA';

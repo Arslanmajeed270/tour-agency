@@ -1,0 +1,106 @@
+.InputBackground {
+    background-color: white;
+}
+.Input {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.Label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.InputElement {
+    display: block;
+    width: 100%;
+    height: calc(1.5em + 1.3rem + 2px);
+    padding: 0.65rem 1rem !important;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #e2e5ec;
+    border-radius: 5px;
+}
+
+.InputElement:focus {
+    outline: none;
+    background-color: #ccc;
+}
+
+.Invalid {
+    border: 1px solid red;
+    background-color: #FDA49A;
+}
+
+.required {
+    color: red;
+}
+
+.Select {
+    width: 100%;
+    height: calc(1.5em + 1.3rem + 2px);
+    padding: 0.65rem 1rem !important;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #e2e5ec;
+    border-radius: 5px;
+}
+
+.inputGroupPrepend {
+    display: flex;
+}
+
+.InputNumberStyleInput {
+    display: block;
+    width: 100%;
+    height: calc(1.5em + 1.3rem + 2px);
+    padding: 0.65rem 1rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #e2e5ec;
+    border-radius: 0px 4px 4px 0px;
+}
+
+.InputNumberStyleSpan{
+    display: flex;
+    align-items: center;
+    padding: 0.65rem 1rem;
+    margin-bottom: 0;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #a7abc3;
+    text-align: center;
+    white-space: nowrap;
+    background-color: #f7f8fa;
+    border: 1px solid #e2e5ec;
+    border-radius: 4px 0 0 4px;
+}
+
+
+.imageUploader {
+cursor: pointer;
+  outline: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  filter: alpha(opacity=0); /* IE < 9 */
+  opacity: 0;   
+}
