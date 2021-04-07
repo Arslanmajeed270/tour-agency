@@ -1,9 +1,7 @@
 import axios from 'axios';
 
 import {
-    SET_TOURS_DATA,
-    SET_SINGLE_TOURS,
-    SET_USER_BOOKED_TOURS
+    SET_AGENCY_TOURS_DATA,
 } from './types';
 
 import {
@@ -20,25 +18,25 @@ import { Success } from '../../components/common/toastify'
 
 const BACKEND_SERVER_URL = process.env.REACT_APP_API_URL_DEV || "/";
 
-// ToursDta - Get ToursData from backend
-export const getToursData = (reqPacket) => dispatch => {
+// Agency ToursDta - Get Agency ToursData from backend
+export const getAgencyToursData = (agencyId) => dispatch => {
     dispatch(setPageLoading());
 
     axios
-    .post(
-        BACKEND_SERVER_URL+`/tours`, reqPacket
+    .get(
+        BACKEND_SERVER_URL+`/tours/`+agencyId
     )
     .then(res => {
         const { status, data } = res.data;
         if( status === "success" ){
             dispatch({
-                type: SET_TOURS_DATA,
+                type: SET_AGENCY_TOURS_DATA,
                 payload: data
             });
             dispatch(clearErrors())
         }else{
             dispatch(setErrors({
-                message: "SomeThing Went Wrong! Please try again."
+                message: "SomeThing Went Wrong while fetching data."
             }))
         }        
     })
@@ -46,25 +44,23 @@ export const getToursData = (reqPacket) => dispatch => {
     .finally(() => dispatch(clearPageLoading()))
 };
 
-// Single Tour - Get single tour from backend
-export const getSingleTour = (id) => dispatch => {
+// ADD NEW TOUR
+export const addTour = (formData, history) => dispatch => {
     dispatch(setPageLoading());
 
     axios
-    .get(
-        BACKEND_SERVER_URL+'/single-tour/'+id
+    .post(
+        BACKEND_SERVER_URL+'/addTour', formData
     )
     .then(res => {
-        const { status, tour } = res.data;
+        const { status } = res.data;
         if( status === "success" ){
-            dispatch({
-                type: SET_SINGLE_TOURS,
-                payload: tour
-            });
+            Success("Tour successfully added!.");
             dispatch(clearErrors())
+            history.push('/list-tours');
         }else{
             dispatch(setErrors({
-                message: "SomeThing Went Wrong! Please try again."
+                message: "SomeThing Went Wrong while adding tour!."
             }))
         }        
     })
@@ -73,51 +69,28 @@ export const getSingleTour = (id) => dispatch => {
     .finally(() => dispatch(clearPageLoading()))
 };
 
-// Book tour - book tour
-export const bookTour = (reqPacket) => dispatch => {
+
+// Edit EXITED TOUR
+export const editTour = (formData, history) => dispatch => {
     dispatch(setPageLoading());
+
     axios
     .post(
-        BACKEND_SERVER_URL+'/bookTour',
-        reqPacket
+        BACKEND_SERVER_URL+'/editTour', formData
     )
     .then(res => {
         const { status } = res.data;
         if( status === "success" ){
-            Success("Congratulations! Your tour successfully booked.");
+            Success("Tour Successfully Updated!.");
             dispatch(clearErrors())
+            history.push('/list-tours');
         }else{
             dispatch(setErrors({
-                message: "SomeThing Went Wrong! Please try again."
+                message: "SomeThing Went Wrong while adding tour!."
             }))
         }        
     })
-    .catch(err => dispatch(setErrors(err)))
-    .finally(() => dispatch(clearPageLoading()))
-};
-
-// user booked tours
-export const userBookingDetail = (id) => dispatch => {
-    dispatch(setPageLoading());
-    console.log(`i am here`);
-    axios
-    .get(
-        BACKEND_SERVER_URL+'/userBookingDetail/'+id
-    )
-    .then(res => {
-        const { status, data } = res.data;
-        if( status === "success" ){
-            dispatch({
-                type: SET_USER_BOOKED_TOURS,
-                payload: data.bookedTours
-            });
-            dispatch(clearErrors())
-        }else{
-            dispatch(setErrors({
-                message: "SomeThing Went Wrong! Please try again."
-            }))
-        }        
-    })
-    .catch(err => dispatch(setErrors(err)))
+    .catch(err => {
+        dispatch(setErrors(err)) })
     .finally(() => dispatch(clearPageLoading()))
 };

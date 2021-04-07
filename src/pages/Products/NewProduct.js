@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {connect} from 'react-redux';
 
 
-import { addTour } from '../../store/tours/actions';
+// import * as actions from '../../store/actions/index';
 
 //importing forms
 import Form1 from './form/Form1';
@@ -11,6 +11,7 @@ import Form3 from './form/Form3';
 import Form4 from './form/Form4';
 
 import ErrorModel from '../../components/common/errorModel';
+// import{Alert } from 'react-bootstrap';
 import Spinner from '../../components/common/Spinner';
 
 
@@ -21,36 +22,38 @@ class NewProduct extends Component {
     this.state = {
       errors: {},
       loading : false,
+     
 
-      title:'',
-      location:'',
+      name: '',
+      sku: '',
+      quantityInStock: 0,
       description: '',
-      departure: new Date(),
-      returning: new Date(),
-      price:0,
-      duration:0,
-      allowedPersons: 0,
-      tags: [],
-      tag: '',
-      included: [{
-        name: "",
-        status: false,
-        detail: "",
-        image: ""
-      }],
-      plan: [],
-      images: [],
-      checkoutDestination: '',
-
-      titleError: false,
-      locationError:false,
-      priceError:false,
-      durationError:false,
-      allowedPersonsError:false,
-      imagesError:false,
+      cost: 0,
+      price: 0,
+      salePrice: 0,
+      saleStartDate: new Date(),
+      saleEndDate: new Date(),
+      apiGrade: '',
+      packagingSize: 0,
+      packagingSizeUnit: '',
+      recUsageLimit: 0,
+      recUsageLimitUnit: '',
+      company: '',
+      status: true,
+      productType: '',
+      images:[],
       
+      companies: [],
+
+      nameError: false,
+      quantityInStockError:false,
+      productTypeError:false,
+      companyError:false,
+      costError:false,
+      priceError:false,
       show: false,
-      activeStep:1
+
+      activeStep:0
       };
   }
 
@@ -59,9 +62,18 @@ class NewProduct extends Component {
   static getDerivedStateFromProps(props, state) {
 
     const {errors, page } = props;
+    // const companies = props.companies && props.companies.rows ? props.companies.rows: [];
+
+    
 
     let stateChanged = false;
     let changedState = {};
+
+    // if(companies && JSON.stringify(state.companies) !== JSON.stringify(companies)){
+        
+    //   changedState.companies = companies;
+    //   stateChanged = true;
+    // }
 
     if(errors && JSON.stringify(state.errors) !== JSON.stringify(errors)){
         
@@ -80,11 +92,15 @@ class NewProduct extends Component {
     return null;
   }
 
+  componentDidMount(){
+    // const formData = {};
+
+    // this.props.onGetCompanies(formData);
+  }
+
   
   onActiveStepHandler = (current) => {
-    console.log(`checking current: `, current);
-    const { activeStep } = this.state;
-    if(current > activeStep){
+    if(current > this.state.activeStep){
       this.validate(current);
     }
     else{
@@ -108,78 +124,69 @@ class NewProduct extends Component {
 
   validate = (current) => {
     
-    let titleError = false;
-    let locationError = false;
+    let nameError = false;
+    let quantityInStockError = false;
+    let productTypeError = false;
+    let companyError = false;
+    let costError = false;
     let priceError = false;
-    let durationError = false;
-    let allowedPersonsError = false;
-    let imagesError = false;
     
+    let activeStep  = this.state.activeStep;
     let show = false;
-    let activeStep = this.state.activeStep;
 
-    const { 
-    title,
-    location,
-    price,
-    duration,
-    allowedPersons,
-    images,
-    } = this.state;
-
-
-    if( activeStep === 0 && 
-      (!title || title === '')
-      ){
-      titleError = true;
+    if(!this.state.name || this.state.name === ''){
+      nameError = true;
       show = true;
     }
-    if( activeStep === 0 && ( !location || location === "") ){
-      locationError = true;
+    if(!this.state.quantityInStock || this.state.quantityInStock === 0){
+      quantityInStockError = true;
       show = true;
     }
-    if( activeStep === 0 && (!price || price === 0) ){
+    if(!this.state.productType || this.state.productType === ''){
+      productTypeError = true;
+      show = true;
+    }
+    // if(!this.state.company || this.state.company === ''){
+    //   companyError = true;
+    //   show = true;
+    // }
+    if(current > 1 && (!this.state.cost || this.state.cost === 0)){
+      costError = true;
+      show = true;
+    }
+    if(current > 1 &&  (!this.state.price || this.state.price === 0)){
       priceError = true;
       show = true;
     }
-    if( activeStep === 0 && ( !duration || duration === '') ){
-      durationError = true;
-      show = true;
-    }
-    if( activeStep === 0 && ( !allowedPersons || allowedPersons === '' || (typeof allowedPersons === "string" && Number(allowedPersons) < 1 ) ) ){
-      allowedPersonsError = true;
-      show = true;
-    }
-    if( activeStep === 2 && (!images || images.length < 0)){
-      imagesError = true;
-      show = true;
-    }
 
-    if( !titleError &&
-      !locationError &&
-      !priceError &&
-      !durationError &&
-      !allowedPersonsError &&
-      !imagesError ){
+    if(activeStep === 1 && current > 1 && !nameError && !quantityInStockError && 
+      !productTypeError && !companyError && !costError && !priceError){
+      activeStep = current;
+    }
+    else if(activeStep === 0 && current > 0 &&  !nameError && !quantityInStockError && 
+      !productTypeError && !companyError){
         activeStep = current;
     }
-    
-    this.setState({
-      titleError,
-      locationError,
-      priceError,
-      durationError,
-      allowedPersonsError,
-      imagesError,
-      show,
-      activeStep
-    });
+    else if(activeStep > 1){
+      activeStep = current;
+    }
 
+    this.setState({
+      nameError: nameError,
+      quantityInStockError:quantityInStockError,
+      productTypeError:productTypeError,
+      companyError:companyError,
+      costError:costError,
+      priceError:priceError,
+      activeStep: activeStep,
+      show: show
+    });
+    
   }
 
   onImageHandler = (status,imgs) => {
     console.log("imgs: ", imgs); 
-    const { images } = this.state;
+    const images = this.state.images;
     if(status === 'done')
     {
       images.push(imgs);
@@ -192,106 +199,91 @@ class NewProduct extends Component {
       images.splice(index, 1);
     }
     this.setState({
-      images
+      images: images
     });
   }
-
-
-  addTagsHandler = () => {
-    const { tag, tags } = this.state;
-    if( tag !== "" ){
-      tags.push(tag);
-      this.setState({
-        tag: "",
-        tags
-      });
-    }
-  }
+  
  
   onChangeHandler = e => {
-    const { name } = e.target;
-    console.log('name', name);
-    if(name === 'images'){
+    const targetName = e.target.name;
+    // const targetValue = e.target.value;
+    
+
+    console.log('targetName', targetName);
+    
+
+    if(targetName === 'images'){
       this.setState({ images: e.target.files});
     }
-    else if( name.indexOf('included') > 0 ){
-      const { included } = this.state;
-      const index = Number(name.split('-')[1]);
-      const targetName = Number(name.split('-')[2]);
-      included[index][targetName] = e.target.value;
-      this.setState({
-        included
-      })
-    }
     else{
-      this.setState({[name]: e.target.value});
-    }
-  }
+      this.setState({[e.target.name]: e.target.value});
 
-  removeElementHandler = (index, name) => {
-      this.setState({
-        [name]: [name].splice(index, 1)
-      });
+    }
   }
 
   onSubmit = (e) => {
     e.preventDefault();
 
-    const { 
-      title, location, description, departure,
-      returning, price, duration, allowedPersons, tags,
-      included, plan, images, checkoutDestination 
-    } = this.state;
-
-    const { onAddTour, history } = this.props;
+    const {name, sku, quantityInStock, description, cost, price, salePrice, 
+      saleStartDate, saleEndDate,apiGrade, packagingSize,packagingSizeUnit, recUsageLimit,
+      recUsageLimitUnit, company, status, productType, images } = this.state; 
 
     console.log("into submit");
 
-    var formData = new FormData();
+    var formdata = new FormData();
 
-    formData.append("title", title);
-    formData.append("location", location);
-    formData.append("description", description);
-    formData.append("departure", departure);
-    formData.append("returning", returning);
-    formData.append("price", price);
-    formData.append("duration", duration);
-    formData.append("allowedPersons", allowedPersons);
-    formData.append("tags", tags);
-    formData.append("included", included);
-    formData.append("plan", plan);
-    formData.append("checkoutDestination", checkoutDestination);
+    formdata.append("name", name);
+    formdata.append("sku", sku);
+    formdata.append("quantityInStock", quantityInStock);
+    formdata.append("description", description);
+    formdata.append("cost", cost);
+    formdata.append("price", price);
+    formdata.append("salePrice", salePrice);
+    formdata.append("saleStartDate", saleStartDate);
+    formdata.append("saleEndDate", saleEndDate);
+    formdata.append("apiGrade", apiGrade);
+    formdata.append("packagingSize", packagingSize);
+    formdata.append("packagingSizeUnit", packagingSizeUnit);
+    formdata.append("recUsageLimit", recUsageLimit);
+    formdata.append("recUsageLimitUnit", recUsageLimitUnit);
+    formdata.append("company", company);
+    formdata.append("status", status);
+    formdata.append("productType", productType);
 
 
     console.log("images: ", images);
     if(images && images.length ){
       images.map(image => (
-        formData.append("images", image, image.name)
+        formdata.append("images", image, image.name)
       ));
     }
   
-    console.log("formData", formData);
+    console.log("formData", formdata);
     
   
-    // onAddTour(formData, history);
+    this.props.onSubmit(formdata, this.props.history);
+
+
   }
 
   render() {
 
     const {
       loading,activeStep,
-      
-      title, location, description, departure,
-      returning, price, duration, allowedPersons, tag, tags,
-      included, plan, images, checkoutDestination,
 
-      titleError, locationError, priceError, 
-      durationError, allowedPersonsError, imagesError
+      name, sku, quantityInStock, description, cost, price, salePrice, 
+      saleStartDate, saleEndDate,apiGrade, packagingSize,packagingSizeUnit, recUsageLimit,
+      recUsageLimitUnit, company, status, productType, images,
+      companies,
+      
+      nameError, quantityInStockError, productTypeError,
+      companyError, costError, priceError,
     } = this.state;
 
     let pageContent = '';
+    console.log("images: ", images);
+    console.log("companies: ", companies);
 
-    console.log('checking this.state: ', this.state);
     
       if(loading){
         pageContent = <Spinner />
@@ -318,7 +310,7 @@ class NewProduct extends Component {
                             <i className="flaticon-information" />
                           </div>
                           <div className="kt-wizard-v1__nav-label" >
-                            Tour Information
+                            1) Product Information
                           </div>
                         </div>
                       </div>
@@ -332,7 +324,7 @@ class NewProduct extends Component {
                             <i className="flaticon-price-tag" />
                           </div>
                           <div className="kt-wizard-v1__nav-label" >
-                            2) Tags, Included & Plan
+                            2) Prices
                           </div>
                         </div>
                       </div>
@@ -372,6 +364,7 @@ class NewProduct extends Component {
                 </div>
 
                 {pageContent}
+                <ErrorModel show={this.state.show} handleClose={this.handleClose} />
 
                 <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v1__wrapper">
                   {/*begin: Form Wizard Form*/}
@@ -380,23 +373,25 @@ class NewProduct extends Component {
                     {/*begin: Form Wizard Step 1*/}
                     {activeStep === 0 && 
                       < Form1 
-                      title={title}
+                      name={name} 
+                      status={status}
+                      quantityInStock={quantityInStock} 
+                      productType={productType}
+                      company={company}
+                      sku={sku}
+                      recUsageLimit={recUsageLimit}
+                      recUsageLimitUnit={recUsageLimitUnit} 
                       description={description}
-                      location={location}
-                      departure={departure}
-                      returning={returning}
-                      price={price}
-                      duration={duration}
-                      allowedPersons={allowedPersons}
-                      checkoutDestination={checkoutDestination}
-                     
+                      apiGrade={apiGrade}
+                      packagingSize={packagingSize}
+                      packagingSizeUnit={packagingSizeUnit}
+                      companies={companies}
                       onChangeHandler={this.onChangeHandler}
 
-                      titleError={titleError}
-                      locationError={locationError}
-                      priceError={priceError}
-                      durationError={durationError}
-                      allowedPersonsError={allowedPersonsError}
+                      nameError={nameError}
+                      quantityInStockError={quantityInStockError}
+                      productTypeError={productTypeError}
+                      companyError={companyError}
                       
                       />
                     }
@@ -407,14 +402,15 @@ class NewProduct extends Component {
 
                     {activeStep === 1 &&
                         <Form2 
-                        tags={tags}
-                        tag={tag}
-                        included={included}
-                        plan={plan}
-
+                        cost={cost} 
+                        price={price}
+                        salePrice={salePrice}
+                        saleStartDate={saleStartDate} 
+                        saleEndDate={saleEndDate}
                         onChangeHandler={this.onChangeHandler}
-                        addTagsHandler={this.addTagsHandler}
 
+                        costError={costError}
+                        priceError={priceError}
                         />
                     }
 
@@ -425,7 +421,7 @@ class NewProduct extends Component {
 
                     {/*begin: Form Wizard Step 3*/}
                     {activeStep === 2 &&
-                      <Form3
+                      <Form3 
                       onChangeHandler={(status, imgs) => this.onImageHandler(status, imgs)}
                       />
                     }
@@ -434,18 +430,20 @@ class NewProduct extends Component {
                      {/*begin: Form Wizard Step 4*/}
                      {activeStep === 3 &&
                      <Form4 
-                      title={title}
+                      name={name} 
+                      status={status}
+                      quantityInStock={quantityInStock} 
+                      productType={productType}
+                      company={company}
+                      sku={sku}
+                      recUsageLimit={recUsageLimit}
+                      recUsageLimitUnit={recUsageLimitUnit} 
                       description={description}
-                      location={location}
-                      departure={departure}
-                      returning={returning}
+                      cost={cost} 
                       price={price}
-                      duration={duration}
-                      allowedPersons={allowedPersons}
-                      checkoutDestination={checkoutDestination}
-                      tags={tags}
-                      included={included}
-                      plan={plan}
+                      salePrice={salePrice}
+                      saleStartDate={saleStartDate} 
+                      saleEndDate={saleEndDate}
                      />                     
                      }
                     {/*end: Form Wizard Step 4*/}
@@ -479,7 +477,7 @@ class NewProduct extends Component {
                         Next Step
                       </div>
                      }
-                      <ErrorModel show={this.state.show} handleClose={this.handleClose} />
+                     
                     </div>
                     {/*end: Form Actions */}
                   </form>
@@ -497,6 +495,7 @@ class NewProduct extends Component {
 
 const mapStateToProps = state => {
   return {
+    // companies: state.company.companies,
     page: state.page,
     errors: state.errors
   }
@@ -505,7 +504,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onAddTour: (formData, history) => dispatch(addTour(formData, history))
+    // onGetCompanies: (formData) => dispatch(actions.getCompanies(formData)),
+    // onSubmit: (formData, history) => dispatch(actions.addProduct(formData, history))
   }
 };
 

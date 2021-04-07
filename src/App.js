@@ -32,6 +32,18 @@ class App extends Component {
         path:"/new-tour",
         active: "New Tour" 
       },
+      {
+        path:"/list-products",
+        active: "List Products" 
+      },
+      {
+        path:"/edit-product",
+        active: "Edit Product" 
+      },
+      {
+        path:"/new-product",
+        active: "New Product" 
+      }
     ],
     publicRoutes: [
       "/login",
@@ -59,24 +71,24 @@ class App extends Component {
   
     const routes = (
       <Switch>
-        { privateRoutes.map( (route, index) => (
-            <PrivateRoute
-              exact
-              key={index} 
-              path={route.path}
-              component={(props) => <Index active={route.active} {...props} />} />
-          )) 
-        }
-        { publicRoutes.map( (route, index) => (
-            <PublicRoute
-              exact
-              key={index} 
-              path={route}
-              component={(props) => route === "/login" ?  <Login {...props} /> : <Register {...props} /> } />
-          )) 
-        }
-          <Redirect to={"/dashboard"} />
-          </Switch>
+          { privateRoutes.map( (route, index) => (
+              <PrivateRoute
+                exact
+                key={index} 
+                path={route.path}
+                component={(props) => <Index active={route.active} {...props} />} />
+            )) 
+          }
+          { publicRoutes.map( (route, index) => (
+              <PublicRoute
+                exact
+                key={index} 
+                path={route}
+                component={(props) => route === "/login" ?  <Login {...props} /> : <Register {...props} /> } />
+            )) 
+          }
+            <Redirect to={"/dashboard"} />
+        </Switch>
     );
     return (
       <div className="app" style={{height: "100%"}}>
